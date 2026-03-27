@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Reserve — Elevate Restaurant & Bar</title>
 <link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 <style>
 .contact-wrapper { padding:80px 60px; max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:start; }
 .info-block { margin-bottom:44px; }
@@ -31,9 +32,6 @@
 .form-group select option { background:var(--dark2); }
 .form-group textarea { resize:none; height:100px; }
 .form-group input.error, .form-group select.error { border-color:#e05c5c !important; }
-input[type="date"] { color-scheme:dark; cursor:pointer; }
-input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.7) sepia(1) saturate(2) hue-rotate(5deg); cursor:pointer; opacity:0.7; transition:opacity 0.2s; }
-input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
 .error-text { font-size:0.55rem; color:#e05c5c; margin-top:5px; display:none; }
 .has-error .error-text { display:block; }
 .form-submit { margin-top:8px; width:100%; padding:18px; background:#25d366; border:none; color:#fff; font-family:'Montserrat',sans-serif; font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; font-weight:600; cursor:pointer; transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:12px; }
@@ -47,6 +45,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
 .success-msg p { font-size:0.7rem; color:var(--text-muted); line-height:1.9; }
 </style>
 </head>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <body>
 
 <div class="cursor" id="cursor"></div>
@@ -82,7 +81,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
       <h4>Opening Hours</h4>
       <div class="hours-grid">
         <div class="hours-row"><span class="hours-day">Mon – Fri</span>10:00 AM – 11:00 PM</div>
-        <div class="hours-row"><span class="hours-day">Sat – Sun</span>12:00 PM – 11:00 AM</div>
+        <div class="hours-row"><span class="hours-day">Sat – Sun</span>11:00 AM – 11:00 PM</div>
         <div class="hours-row"><span class="hours-day">Happy Hour</span>4:00 PM – 7:00 PM</div>
         <div class="hours-row"><span class="hours-day">Kitchen Closes</span>11:30 PM</div>
       </div>
@@ -93,7 +92,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
     </div>
     <div class="info-block">
       <h4>Email</h4>
-      <p><a href="/cdn-cgi/l/email-protection#a4ccc1c8c8cbe4c1c8c1d2c5d0c189c6c5d68acdca"><span class="__cf_email__" data-cfemail="e68e838a8a89a6838a8390879283cb848794c88f88">[email&#160;protected]</span></a></p>
+      <p><a href="mailto:hello@elevate-bar.in">hello@elevate-bar.in</a></p>
     </div>
     <div class="info-block">
       <h4>Location</h4>
@@ -120,7 +119,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
         <div class="form-group" id="grp-lname"><label>Last Name *</label><input type="text" id="lname" placeholder="Sharma"/><span class="error-text">Required</span></div>
       </div>
       <div class="form-row">
-        <div class="form-group" id="grp-date"><label>Date *</label><input type="date" id="bdate"/><span class="error-text">Required</span></div>
+        <div class="form-group" id="grp-date"><label>Date *</label><input type="text" id="bdate" placeholder="Select Date" readonly><span class="error-text">Required</span></div>
         <div class="form-group"><label>Time *</label>
           <select id="btime">
             <option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option>
@@ -177,12 +176,14 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="main.js"></script>
+<script src="main.js"></script>
 <script>
-  const today = new Date().toISOString().split('T')[0];
-  const bdateInput = document.getElementById('bdate');
-  bdateInput.setAttribute('min', today);
-  bdateInput.value = today;
+flatpickr("#bdate", {
+  minDate: "today",
+  dateFormat: "d-m-Y",
+  altInput: true,
+  altFormat: "l, d F Y"
+});
 
   function validate(id, grpId) {
     const el = document.getElementById(id);
@@ -202,8 +203,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
     const phone  = document.getElementById('phone').value.trim();
     const occasion = document.getElementById('occasion').value;
     const requests = document.getElementById('requests').value.trim();
-
-    const formattedDate = new Date(bdate).toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const formattedDate = bdate;
 
     let msg = `🍽️ *New Table Reservation — Elevate*\n\n`;
     msg += `👤 *Name:* ${fname} ${lname}\n`;
@@ -218,4 +218,11 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
     // ⬇️ Replace with the restaurant's actual WhatsApp number (no + or spaces)
     const RESTAURANT_WA = '919817600621';
 
-    document.getElementById('reservationForm
+    document.getElementById('reservationForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    setTimeout(() => { window.open(`https://wa.me/${RESTAURANT_WA}?text=${encodeURIComponent(msg)}`, '_blank'); }, 400);
+  }
+</script>
+</body>
+</html>
+
